@@ -1,16 +1,32 @@
 package ua.nure.sokolov.practice5.part2;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
-import static java.lang.Thread.sleep;
 
 public class Part2 {
 
 
     public static void main(String[] args) {
-       Part2 part2 = new Part2();
-       Spam spam = new Spam(new int[]{333,555}, new String[]{"AAAA", "bbb0"});
-       spam.main();
+        final byte[] bytes = System.lineSeparator().getBytes();
+
+        InputStream is = new InputStream() {
+            int cur;
+            @Override
+            public int read() throws IOException {
+                if (cur == 0){
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                }
+                return cur < bytes.length ? bytes[cur++] : 1;
+            }
+        };
+        System.setIn(is);
+        Spam.main(null);
     }
 
 }
@@ -45,8 +61,8 @@ class Spam{
         }
     }
 
-    public void main(){
-        Spam spam = new Spam(times, messages);
+    public static void main(String[] args) {
+        Spam spam = new Spam(new int[]{333,555}, new String[]{"AAAA", "bbb0"});
         spam.start();
         new Thread(){
             @Override
