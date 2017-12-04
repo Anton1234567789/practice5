@@ -7,39 +7,40 @@ public class Part5 {
     static Thread[] threads;
     static String filePath = "part5.txt";
 
-    static class Worker{
-        int count;
-        Worker(int countThread){
-            for (int j = 0; j < countThread; j++){
-                threads[j] = new Thread(){
-                        @Override
-                        public void run() {
-                            for (int j = 0; j < 20; j++){
-                                synchronized (threads){
-                                    try {
-                                        writeData(filePath, count, 0);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                count++;
-                            }
-                        }
-                    };
-                threads[j].start();
-                }
-            }
-        }
-
     public static void main(String[] args) {
+
+        Worker worker = new Worker(10);
 //        try {
-//            writeData(filePath, 1111111, 0);
-//            System.out.println(new String(readCharsFromFile(filePath, 0, 7)));
+//            readCharsFromFile(filePath, 0, filePath.length());
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        Worker worker = new Worker(10);
+    }
 
+    static class Worker{
+        int count;
+        int countRow = 0;
+        Worker(int countThread){
+            for (int j = 0; j < countThread; j++) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        synchronized (filePath) {
+                        for (int j = 0; j < 20; j++) {
+                                try {
+                                    writeData(filePath, count, countRow);
+                                    count++;
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            countRow++;
+                        }
+                    }
+                }.start();
+            }
+
+        }
     }
 
     private static void writeData(String filePath, int d, int seek) throws IOException {
