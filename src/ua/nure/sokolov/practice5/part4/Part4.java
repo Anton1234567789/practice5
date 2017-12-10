@@ -33,11 +33,12 @@ class Worker implements Callable<Integer>{
     private int countRow;
     private int countColumn;
     private int[] maxNumberInList = new int[4];
+
     public Worker( int M, int N) {
         this.matrix = new int[M][N];
         this.countRow = M;
         this.countColumn = N;
-
+//        WriterInFile.main(new String[]{"100", "part4.txt"});
         for (int j = 0; j < M; j++){
                 getInputFile.getInput("part4.txt");
         }
@@ -74,7 +75,7 @@ class Worker implements Callable<Integer>{
             threads[j] = new Thread(){
                 @Override
                 public void run() {
-                    synchronized (threads) {
+//                    synchronized (threads) {
                         int countThread = 0;
                         for (int j = 0; j < countRow; j++){
                             if (countThread == 0){
@@ -110,7 +111,7 @@ class Worker implements Callable<Integer>{
                             }
                             countThread++;
                         }
-                    }
+//                    }
                 }
             };
         }
