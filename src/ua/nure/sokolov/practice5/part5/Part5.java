@@ -10,24 +10,23 @@ public class Part5 {
     static class Worker{
         int count;
         Worker(int countThread){
-            for (int j = 0; j < countThread; j++){
-                threads[j] = new Thread(){
-                        @Override
-                        public void run() {
-                            for (int j = 0; j < 20; j++){
-                                synchronized (threads){
-                                    try {
-                                        writeData(filePath, count, 0);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+            for (int j = 0; j < countThread; j++) {
+                threads[j] = new Thread() {
+                    @Override
+                    public void run() {
+                        int n = 0;
+                            for (int j = 0; j < 20; j++) {
+                                try {
+                                    writeData(filePath, "0"+n,n);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                                count++;
                             }
-                        }
-                    };
-                threads[j].start();
-                }
+                            count++;
+                            n++;
+                    }
+                };
+            }
             }
         }
 
@@ -38,17 +37,103 @@ public class Part5 {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        Worker worker = new Worker(10);
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                synchronized ("d") {
+                    int n = 0;
+                    for (int j = 0; j < 20; j++) {
+                        try {
+                            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+
+                            file.seek(0);
+                            file.write(("0").getBytes());
+                            String lineSeparator = System.getProperty("line.separator", "\n");
+//                            String updatedString = "\r\n";
+                            file.write(lineSeparator.getBytes());
+                            file.close();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    n++;
+                }
+            }
+        };
+        t.start();
+
+
+        Thread t1 = new Thread(){
+            @Override
+            public void run() {
+                synchronized ("d") {
+                    int n = 0;
+                    for (int j = 0; j < 20; j++) {
+                        try {
+                            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+                            file.seek(4);
+                            file.write(("1").getBytes());
+                            String lineSeparator = System.getProperty("line.separator", "\n");
+//                            String updatedString = "\r\n";
+                            file.write(lineSeparator.getBytes());
+                            file.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    n++;
+
+                }
+            }
+        };
+
+        t1.start();
+
+
+
+        Thread t2 = new Thread(){
+            @Override
+            public void run() {
+                synchronized ("d") {
+                    int n = 0;
+                    for (int j = 0; j < 20; j++) {
+                        try {
+                            RandomAccessFile file = new RandomAccessFile(filePath, "rw");
+                            file.seek(6);
+
+                            file.write(("2").getBytes());
+                            String lineSeparator = System.getProperty("line.separator", "\n");
+//                            String updatedString = "\r\n";
+                            file.write(lineSeparator.getBytes());
+                            file.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    n++;
+                }
+            }
+        };
+
+        t2.start();
+
 
     }
 
-    private static void writeData(String filePath, int d, int seek) throws IOException {
+    private static void writeData(String filePath, String d, int seek) throws IOException {
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
 
         file.seek(seek);
         String data = String.valueOf(d);
 
         file.write(data.getBytes());
+        String lineSeparator = System.getProperty("line.separator", "\n");
+
+//
+//        String updatedString = "\r\n";
+//        file.writeBytes(updatedString);
+
         file.close();
     }
 
