@@ -12,7 +12,16 @@ public class Part4 {
     public static void main(String[] args) {
         Worker worker = new Worker(4,100);
         worker.performanceTaskWithoutThread();
+        long before = System.currentTimeMillis();
         worker.performanceTaskInThread();
+        try {
+            System.out.println("Max element with thread " + worker.findMaxNumberInParallel());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long after = System.currentTimeMillis() - before;
+        System.out.println("Time performance with used thread: " + after);
+
 
     }
 
@@ -23,25 +32,26 @@ class Worker implements Callable<Integer>{
     private int[][] matrix;
     private int countRow;
     private int countColumn;
+    private int[] maxNumberInList = new int[4];
     public Worker( int M, int N) {
         this.matrix = new int[M][N];
         this.countRow = M;
         this.countColumn = N;
 
         for (int j = 0; j < M; j++){
-                WriterInFile.main(new String[]{String.valueOf(N), "part4.txt"});
+                getInputFile.getInput("part4.txt");
         }
 
         for (int l = 0; l < M; l++){
             for (int u = 0; u < N; u++){
                 if (l == 0) {
-                    matrix[l][u] = WriterInFile.list1.get(u);
+                    matrix[l][u] = GetInputFile.list1.get(u);
                 }else if (l == 1) {
-                    matrix[l][u] = WriterInFile.list2.get(u);
+                    matrix[l][u] = GetInputFile.list2.get(u);
                 }else if (l == 2){
-                    matrix[l][u] = WriterInFile.list3.get(u);
+                    matrix[l][u] = GetInputFile.list3.get(u);
                 }else if (l == 3){
-                    matrix[l][u] = WriterInFile.list4.get(u);
+                    matrix[l][u] = GetInputFile.list4.get(u);
                 }
 
             }
@@ -58,7 +68,6 @@ class Worker implements Callable<Integer>{
     public void performanceTaskInThread() {
 
         this.threads = new Thread[countRow];
-        int[] findMax = new int[5];
 
         for (int j = 0; j < countRow; j++){
             int finalJ = j;
@@ -66,14 +75,41 @@ class Worker implements Callable<Integer>{
                 @Override
                 public void run() {
                     synchronized (threads) {
-                        long before = System.currentTimeMillis();
-                        try {
-                            System.out.println("Max element with used thread: " + findMaxNumberInThread());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        int countThread = 0;
+                        for (int j = 0; j < countRow; j++){
+                            if (countThread == 0){
+                                try {
+//                                    System.out.println("Max element in first find " + firstFindInThreadMax());
+                                    firstFindInThreadMax();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }else if (countThread == 1){
+                                try {
+//                                    System.out.println("Max element in second find " + secondFindInThreadMax());
+                                    secondFindInThreadMax();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }else if (countThread == 2){
+                                try {
+//                                    System.out.println("Max element in thirds find " + thirdsFindInThreadMax());
+                                    thirdsFindInThreadMax();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else if (countThread == 3){
+                                try {
+//                                    System.out.println("Max element in fourth find " + fourthFindInThreadMax());
+                                    fourthFindInThreadMax();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            countThread++;
                         }
-                        long after = System.currentTimeMillis() - before;
-                        System.out.println("Time performance with used thread: " + after);
                     }
                 }
             };
@@ -81,39 +117,53 @@ class Worker implements Callable<Integer>{
         startThread();
     }
 
-
-
-    public int findMaxNumberInThread() throws InterruptedException{
+    public synchronized int firstFindInThreadMax() throws InterruptedException {
         int max = matrix[0][0];
-        int[] maxNumberInList = new int[4];
-        for (Integer k : WriterInFile.list1){
+        for (Integer k : GetInputFile.list1){
             if (k > max){
                 Thread.sleep(1);
                 max = k;
                 maxNumberInList[0] = max;
             }
         }
-        for (Integer k : WriterInFile.list2){
+        return maxNumberInList[0];
+    }
+    public synchronized int secondFindInThreadMax() throws InterruptedException {
+        int max = matrix[0][0];
+        for (Integer k : GetInputFile.list2){
             if (k > max){
                 Thread.sleep(1);
                 max = k;
                 maxNumberInList[1] = max;
             }
         }
-        for (Integer k : WriterInFile.list3){
+        return maxNumberInList[1];
+    }
+
+    public synchronized int thirdsFindInThreadMax() throws InterruptedException {
+        int max = matrix[0][0];
+        for (Integer k : GetInputFile.list3){
             if (k > max){
                 Thread.sleep(1);
                 max = k;
                 maxNumberInList[2] = max;
             }
         }
-        for (Integer k : WriterInFile.list4){
+        return maxNumberInList[2];
+    }
+    public synchronized int fourthFindInThreadMax() throws InterruptedException {
+        int max = matrix[0][0];
+        for (Integer k : GetInputFile.list4){
             if (k > max){
                 Thread.sleep(1);
                 max = k;
                 maxNumberInList[3] = max;
             }
         }
+        return maxNumberInList[3];
+    }
+
+    public synchronized int findMaxNumberInParallel() throws InterruptedException{
         int maxNumberInMaxList = maxNumberInList[0];
         for (int j = 0; j < maxNumberInList.length; j++){
             if (maxNumberInList[j] > maxNumberInMaxList){
@@ -156,10 +206,6 @@ class Worker implements Callable<Integer>{
 
 class WriterInFile{
     static ArrayList<Integer> list = new ArrayList<Integer>();
-    static ArrayList<Integer> list1 = new ArrayList<Integer>();
-    static ArrayList<Integer> list2 = new ArrayList<Integer>();
-    static ArrayList<Integer> list3 = new ArrayList<Integer>();
-    static ArrayList<Integer> list4 = new ArrayList<Integer>();
     public static void inputList(int n) {
         Random generator = new Random();
         for (int i =0; i < n; i++) {
@@ -173,52 +219,40 @@ class WriterInFile{
             try {
                 File f = new File(args[1]);
                 PrintWriter out = new PrintWriter(new FileWriter(f));
-                int count = 0;
-                for (int element: list){
-                    if (count >= 0 && count < 100){
-                        list1.add(element);
-                        out.print(element);
-                        out.print(" ");
-                        if (count == 99){
-                            out.print(System.lineSeparator());
-                        }
-                    }else if (count >= 100 && count < 200){
-                        list2.add(element);
-                        out.print(element);
-                        out.print(" ");
-                        if (count == 199){
-                            out.print(System.lineSeparator());
-                        }
-                    }else if (count >= 200 && count < 300){
-                        list3.add(element);
-                        out.print(element);
-                        out.print(" ");
-                        if (count == 299){
-                            out.print(System.lineSeparator());
-                        }
-                    }else if (count >= 300 && count < 400){
-                        list4.add(element);
-                        out.print(element);
-                        out.print(" ");
-                        if (count == 399){
-                            out.print(System.lineSeparator());
-                        }
-                    }
-                    count++;
+                for (int element: list) {
+                    out.print(element);
+                    out.print(" ");
+                    out.close();
                 }
-                out.close();
             }catch (IOException e) { e.printStackTrace();}
         }
     }
 }
 
 class GetInputFile {
+    static ArrayList<Integer> list1 = new ArrayList<Integer>();
+    static ArrayList<Integer> list2 = new ArrayList<Integer>();
+    static ArrayList<Integer> list3 = new ArrayList<Integer>();
+    static ArrayList<Integer> list4 = new ArrayList<Integer>();
 
     public String getInput(String fileName){
         StringBuilder sb = new StringBuilder();
         try{
             Scanner scanner=new Scanner(new File(fileName),"UTF-8");
+            int i = 0;
             while(scanner.hasNextLine()){
+                while (scanner.hasNext()){
+                    if (i < 100) {
+                    list1.add(scanner.nextInt());
+                    }else if (i >= 100 && i < 200){
+                        list2.add(scanner.nextInt());
+                    }else if (i >= 200 && i < 300){
+                        list3.add(scanner.nextInt());
+                    }else if (i >= 300 && i < 400){
+                        list4.add(scanner.nextInt());
+                    }
+                    i++;
+                }
                 sb.append(scanner.nextLine()).append(System.lineSeparator());
             }
             return sb.toString().trim();
@@ -227,4 +261,5 @@ class GetInputFile {
         }
         return sb.toString();
     }
+
 }
