@@ -10,6 +10,12 @@ public class Part5 {
     public static void main(String[] args) {
 
      Worker.main(null);
+        try {
+            Worker.readCharsFromFile("part5.txt",0, 200);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }
@@ -17,23 +23,48 @@ class Worker {
     Thread[] threads;
     String filePath = "part5.txt";
     int count;
-    int countRow = 0;
     Worker(int countThread){
         this.threads = new Thread[countThread];
         for (int j = 0; j < countThread; j++) {
+            int finalJ = j;
             threads[j] = new Thread() {
                 @Override
                 public void run() {
                     synchronized (filePath) {
                         for (int j = 0; j < 20; j++) {
                             try {
-                                writeData(filePath, String.valueOf(count), 0);
-                                count++;
+                                if (finalJ == 0) {
+                                    writeData(filePath, finalJ, 0);
+                                }else if (finalJ == 1){
+                                    writeData(filePath, finalJ, 21);
+                                }else if (finalJ == 2){
+                                    writeData(filePath, finalJ, 41);
+                                }
+                                else if (finalJ == 3){
+                                    writeData(filePath, finalJ, 61);
+                                }else if (finalJ == 4){
+                                    writeData(filePath, finalJ, 81);
+                                }
+                                else if (finalJ == 5){
+                                    writeData(filePath, finalJ, 101);
+                                }
+                                else if (finalJ == 6){
+                                    writeData(filePath, finalJ, 121);
+                                }
+                                else if (finalJ == 7){
+                                    writeData(filePath, finalJ, 141);
+                                }
+                                else if (finalJ == 8){
+                                    writeData(filePath, finalJ, 161);
+                                }
+                                else if (finalJ == 9){
+                                    writeData(filePath, finalJ, 181);
+                                }
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
-                        countRow++;
                     }
                 }
             };
@@ -49,19 +80,20 @@ class Worker {
     public static void main(String[] args) {
         Worker worker = new Worker(10);
         worker.startThread();
+
     }
 
-    public static void writeData(String filePath, String d, int seek) throws IOException {
+    public synchronized static void writeData(String filePath, Integer d, int seek) throws IOException {
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         file.seek(seek);
-
-        file.write((d).getBytes());
-        String lineSeparator = System.getProperty("line.separator", "\n");
-        file.write(lineSeparator.getBytes());
+        String intStr = d.toString();
+        file.write(intStr.getBytes());
+//        String lineSeparator = System.getProperty("line.separator", "\n");
+//        file.write(lineSeparator.getBytes());
         file.close();
     }
 
-    private static byte[] readCharsFromFile(String filePath, int seek, int size) throws IOException {
+    public static byte[] readCharsFromFile(String filePath, int seek, int size) throws IOException {
 
         RandomAccessFile file = new RandomAccessFile(filePath, "r");
         file.seek(seek);
