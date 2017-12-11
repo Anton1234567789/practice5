@@ -10,12 +10,6 @@ public class Part5 {
     public static void main(String[] args) {
 
      Worker.main(null);
-        try {
-            Worker.readCharsFromFile("part5.txt",0, 200);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
     }
 }
@@ -31,34 +25,54 @@ class Worker {
                 @Override
                 public void run() {
                     synchronized (filePath) {
-                        for (int j = 0; j < 20; j++) {
+                        for (int j = 0; j < 10; j++) {
                             try {
                                 if (finalJ == 0) {
-                                    writeData(filePath, finalJ, 0);
+                                    for (int k = 0; k < 20; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }else if (finalJ == 1){
-                                    writeData(filePath, finalJ, 21);
+                                    for (int k = 21; k < 41; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }else if (finalJ == 2){
-                                    writeData(filePath, finalJ, 41);
+                                    for (int k = 42; k < 63; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
                                 else if (finalJ == 3){
-                                    writeData(filePath, finalJ, 61);
+                                    for (int k = 84; k < 104; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }else if (finalJ == 4){
-                                    writeData(filePath, finalJ, 81);
+                                    for (int k = 105; k < 126; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
                                 else if (finalJ == 5){
-                                    writeData(filePath, finalJ, 101);
+                                    for (int k = 127; k < 148; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
                                 else if (finalJ == 6){
-                                    writeData(filePath, finalJ, 121);
+                                    for (int k = 169; k < 189; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
                                 else if (finalJ == 7){
-                                    writeData(filePath, finalJ, 141);
+                                    for (int k = 190; k < 211; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
                                 else if (finalJ == 8){
-                                    writeData(filePath, finalJ, 161);
+                                    for (int k = 212; k < 233; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
                                 else if (finalJ == 9){
-                                    writeData(filePath, finalJ, 181);
+                                    for (int k = 234; k < 255; k++) {
+                                        writeData(filePath, finalJ, k);
+                                    }
                                 }
 
                             } catch (IOException e) {
@@ -83,13 +97,13 @@ class Worker {
 
     }
 
-    public synchronized static void writeData(String filePath, Integer d, int seek) throws IOException {
+    public  static void writeData(String filePath, Integer d, int seek) throws IOException {
         RandomAccessFile file = new RandomAccessFile(filePath, "rw");
         file.seek(seek);
         String intStr = d.toString();
         file.write(intStr.getBytes());
-//        String lineSeparator = System.getProperty("line.separator", "\n");
-//        file.write(lineSeparator.getBytes());
+        String lineSeparator = System.getProperty("line.separator", "\n");
+        file.write(lineSeparator.getBytes());
         file.close();
     }
 

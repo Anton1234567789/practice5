@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 public class Part4 {
 
@@ -21,6 +21,23 @@ public class Part4 {
         }
         long after = System.currentTimeMillis() - before;
         System.out.println("Time performance with used thread: " + after);
+
+        //создать ExecutorService на базе пула из пяти потоков
+//              ExecutorService es1 = Executors.newFixedThreadPool(10);
+//                //поместить задачу в очередь на выполнение
+//              Future<Integer> f1 = es1.submit(new Worker(4,100));
+//                while(!f1.isDone()) {
+//                      //подождать пока задача не выполнится
+//                  }
+//        try {
+//            System.out.println("task has been completed : " + f1.get());
+//        } catch (InterruptedException ie) {
+//                    ie.printStackTrace(System.err);
+//        } catch (ExecutionException ee) {
+//            ee.printStackTrace(System.err);
+//        }
+//        es1.shutdown();
+
 
 
     }
@@ -75,12 +92,11 @@ class Worker implements Callable<Integer>{
             threads[j] = new Thread(){
                 @Override
                 public void run() {
-//                    synchronized (threads) {
+                    synchronized (threads) {
                         int countThread = 0;
                         for (int j = 0; j < countRow; j++){
                             if (countThread == 0){
                                 try {
-//                                    System.out.println("Max element in first find " + firstFindInThreadMax());
                                     firstFindInThreadMax();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
@@ -88,14 +104,12 @@ class Worker implements Callable<Integer>{
 
                             }else if (countThread == 1){
                                 try {
-//                                    System.out.println("Max element in second find " + secondFindInThreadMax());
                                     secondFindInThreadMax();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }else if (countThread == 2){
                                 try {
-//                                    System.out.println("Max element in thirds find " + thirdsFindInThreadMax());
                                     thirdsFindInThreadMax();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
@@ -103,7 +117,6 @@ class Worker implements Callable<Integer>{
                             }
                             else if (countThread == 3){
                                 try {
-//                                    System.out.println("Max element in fourth find " + fourthFindInThreadMax());
                                     fourthFindInThreadMax();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
@@ -111,7 +124,7 @@ class Worker implements Callable<Integer>{
                             }
                             countThread++;
                         }
-//                    }
+                    }
                 }
             };
         }
